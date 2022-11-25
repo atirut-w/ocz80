@@ -1,0 +1,13 @@
+[
+    {
+        "modid": "ocz80",
+        "name": "OCZ80",
+        "version": "0.1.0",
+        "mcversion": "${mcversion}",
+        "description": "Z80 architecture addon for OpenComputers",
+
+        "authorList": [
+            "Atirut Wattanamongkol"
+        ]
+    }
+]
