@@ -1,10 +1,16 @@
+import li.cil.oc.api.Driver;
+import li.cil.oc.api.driver.DriverItem;
+import li.cil.oc.api.driver.item.Memory;
 import li.cil.oc.api.machine.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import com.codingrodent.microprocessor.*;
 
 @Architecture.Name("Zilog Z80")
 public class Arch implements Architecture {
     private final Machine machine;
+
+    private char[] ram;
 
     public Arch(Machine machine) {
         this.machine = machine;
@@ -14,12 +20,25 @@ public class Arch implements Architecture {
         return true;
     }
 
-    public boolean recomputeMemory(Iterable<ItemStack> stack) {
-        return true;
+    public boolean recomputeMemory(Iterable<ItemStack> stacks) {
+        OCZ80.logger.info("Recomputing memory");
+        int total = 0;
+
+        for (ItemStack stack : stacks) {
+            DriverItem driver = Driver.driverFor(stack);
+            if (driver instanceof Memory) {
+                total += ((Memory)driver).amount(stack);
+            }
+        }
+
+        total /= 4;
+        OCZ80.logger.info("Total memory: " + total + "KB");
+
+        return total > 0;
     }
 
     public boolean initialize() {
-        OCZ80.logger.debug("Machine init");
+        OCZ80.logger.info("Machine init");
         return true;
     }
 
