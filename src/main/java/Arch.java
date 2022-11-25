@@ -21,18 +21,17 @@ public class Arch implements Architecture {
     }
 
     public boolean recomputeMemory(Iterable<ItemStack> stacks) {
-        OCZ80.logger.info("Recomputing memory");
+        OCZ80.logger.info("Recomputing memory...");
         int total = 0;
 
         for (ItemStack stack : stacks) {
             DriverItem driver = Driver.driverFor(stack);
             if (driver instanceof Memory) {
-                total += ((Memory)driver).amount(stack);
+                total += ((Memory)driver).amount(stack) * 256; // 1/4 KB
             }
         }
 
-        total /= 4;
-        OCZ80.logger.info("Total memory: " + total + "KB");
+        OCZ80.logger.info("Total memory: " + total / 1024 + "KB");
 
         return total > 0;
     }
