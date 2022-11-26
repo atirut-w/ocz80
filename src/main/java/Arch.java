@@ -10,7 +10,7 @@ import com.codingrodent.microprocessor.*;
 public class Arch implements Architecture {
     private final Machine machine;
 
-    private char[] ram;
+    private char[] ram = new char[0];
 
     public Arch(Machine machine) {
         this.machine = machine;
@@ -27,12 +27,18 @@ public class Arch implements Architecture {
         for (ItemStack stack : stacks) {
             DriverItem driver = Driver.driverFor(stack);
             if (driver instanceof Memory) {
-                total += ((Memory)driver).amount(stack) * 1024; // 1/4 KB
+                total += ((Memory)driver).amount(stack) * 1024;
             }
         }
-        total /= 4;
+        total /= 4; // Full 192KB for a tier 1 stick is a little much
 
-        OCZ80.logger.info("Total memory: " + total / 1024 + "KB");
+        char[] copy = new char[total];
+        for (int i = 0; i < Math.min(total, ram.length); i++) {
+            copy[i] = ram[i];
+        }
+        ram = copy;
+
+        OCZ80.logger.info("New total memory: " + ram.length / 1024 + "KB");
 
         return total > 0;
     }
