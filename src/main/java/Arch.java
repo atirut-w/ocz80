@@ -27,9 +27,10 @@ public class Arch implements Architecture {
         for (ItemStack stack : stacks) {
             DriverItem driver = Driver.driverFor(stack);
             if (driver instanceof Memory) {
-                total += ((Memory)driver).amount(stack) * 256; // 1/4 KB
+                total += ((Memory)driver).amount(stack) * 1024; // 1/4 KB
             }
         }
+        total /= 4;
 
         OCZ80.logger.info("Total memory: " + total / 1024 + "KB");
 
