@@ -71,7 +71,7 @@ dependencies {
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
     implementation "li.cil.oc:OpenComputers:MC1.12.2-1.7.5.221:api"
-    compile "com.codingrodent.microprocessor:Z80Processor:4.2.0"
+    // compile "com.codingrodent.microprocessor:Z80Processor:2.0.2"
     
     // Real examples
     // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env

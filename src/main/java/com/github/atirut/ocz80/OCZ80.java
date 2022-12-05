@@ -1,3 +1,5 @@
+package com.github.atirut.ocz80;
+
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -20,6 +22,6 @@ public class OCZ80 {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        li.cil.oc.api.Machine.add(Arch.class);
+        li.cil.oc.api.Machine.add(com.github.atirut.ocz80.Arch.class);
     }
 }
