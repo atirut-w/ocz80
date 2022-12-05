@@ -17,8 +17,8 @@ public class Arch implements Architecture {
     private byte[] ram;
     private byte[] mmap;
 
-    private short[] main;
-    private short[] shadow;
+    private byte[] main;
+    private byte[] shadow;
     private short pc;
     private boolean running;
 
@@ -68,8 +68,8 @@ public class Arch implements Architecture {
         mmap = new byte[16];
         mmap[0] = 0; // Map in the EEPROM on cold boot.
 
-        main = new short[8];
-        shadow = new short[8];
+        main = new byte[8];
+        shadow = new byte[8];
         pc = 0;
         running = true;
 
@@ -123,8 +123,7 @@ public class Arch implements Architecture {
                             case 3:
                                 switch (inst.y) {
                                     case 2:
-                                        OCZ80.logger.info("IO out");
-                                        fetch();
+                                        out(fetch(), main[7]);
                                 }
                         }
                 }
@@ -147,6 +146,14 @@ public class Arch implements Architecture {
             }
             return ram[mmap[(address >> 12 - 1)] * 4096];
         }
+    }
+
+    void out(byte address, byte value) {
+        OCZ80.logger.info("IO out");
+    }
+
+    byte in(short address) {
+        return 0;
     }
 
     private class Instruction {
