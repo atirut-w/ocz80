@@ -20,7 +20,7 @@ public class Arch implements Architecture {
     private short[] main;
     private short[] shadow;
     private short pc;
-    private boolean running = true;
+    private boolean running;
 
     public Arch(Machine machine) {
         this.machine = machine;
@@ -71,6 +71,7 @@ public class Arch implements Architecture {
         main = new short[8];
         shadow = new short[8];
         pc = 0;
+        running = true;
 
         return initialized = true;
     }
