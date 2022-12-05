@@ -17,8 +17,10 @@ public class Arch implements Architecture {
     private byte[] ram;
     private byte[] mmap;
 
-    private RegisterSet main;
-    private RegisterSet shadow;
+    private short[] main;
+    private short[] shadow;
+    private short pc;
+    private boolean running = true;
 
     public Arch(Machine machine) {
         this.machine = machine;
@@ -49,6 +51,15 @@ public class Arch implements Architecture {
             ram = copy;
         }
 
+        try {
+            String eepromUUID = machine.components().entrySet().stream().filter(i -> i.getValue().equals("eeprom")).map(i -> i.getKey()).findAny().orElse(null);
+            Object[] result = machine.invoke(eepromUUID, "get", new Object[0]);
+            eeprom = (byte[]) result[0];
+        } catch (Exception e) {
+            OCZ80.logger.error("Could not read EEPROM: " + e.toString());
+            eeprom = new byte[0];
+        }
+
         return memorySize > 0;
     }
 
@@ -57,15 +68,9 @@ public class Arch implements Architecture {
         mmap = new byte[16];
         mmap[0] = 0; // Map in the EEPROM on cold boot.
 
-        main = new RegisterSet();
-        shadow = new RegisterSet();
-
-        try {
-            String eepromUUID = machine.components().entrySet().stream().filter(i -> i.getValue().equals("eeprom")).map(i -> i.getKey()).findAny().orElse(null);
-            eeprom = (byte[])(machine.invoke(eepromUUID, "get", new Object[0])[0]);
-        } catch (Exception e) {
-            eeprom = new byte[0];
-        }
+        main = new short[8];
+        shadow = new short[8];
+        pc = 0;
 
         return initialized = true;
     }
@@ -75,7 +80,7 @@ public class Arch implements Architecture {
     }
 
     public ExecutionResult runThreaded(boolean isSynchronizedReturn) {
-        return execute();
+        return new ExecutionResult.SynchronizedCall();
     }
 
     public void runSynchronized() {
@@ -91,23 +96,48 @@ public class Arch implements Architecture {
     public void save(NBTTagCompound nbt) {}
 
     // VM functions start here.
-    ExecutionResult execute() {
-        switch (fetch()) {
-            default:
-                main.pc--;
-                return new ExecutionResult.Error(String.format("Unknown opcode 0x%01x at 0x%04x", (int)read(main.pc), (int)main.pc));
+    void execute() {
+        if (running == false) {
+            return;
         }
-        return new ExecutionResult.SynchronizedCall();
+
+        byte op = fetch();
+        
+        // Check for prefixes
+        switch (op) {
+            default:
+                Instruction inst = new Instruction(op);
+                switch (inst.x) {
+                    case 0:
+                        switch (inst.z) {
+                            case 6:
+                                main[inst.y] = fetch();
+                        }
+                    case 1:
+                        if (inst.z == 6 && inst.y == 6) {
+                            running = false;
+                        }
+                    case 3:
+                        switch (inst.z) {
+                            case 3:
+                                switch (inst.y) {
+                                    case 2:
+                                        OCZ80.logger.info("IO out");
+                                        fetch();
+                                }
+                        }
+                }
+        }
     }
 
     byte fetch() {
-        return read(main.pc++);
+        return read(pc++);
     }
 
     byte read(short address) {
         if (address >> 12 == 0) {
             if (eeprom.length > 0) {
-                return eeprom[address & 0x0fff];
+                return eeprom[(address & 0x0fff) % eeprom.length];
             }
             return 0;
         } else {
@@ -115,6 +145,19 @@ public class Arch implements Architecture {
                 return 0;
             }
             return ram[mmap[(address >> 12 - 1)] * 4096];
+        }
+    }
+
+    private class Instruction {
+        int x, y, z, p, q;
+
+        public Instruction(byte opcode) {
+            x = (opcode >> 6) & 0b11;
+            y = (opcode >> 3) & 0b111;
+            z = opcode & 0b111;
+            
+            p = y >> 1;
+            q = y % 2;
         }
     }
 }
