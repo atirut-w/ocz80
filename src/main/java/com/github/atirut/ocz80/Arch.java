@@ -102,26 +102,26 @@ public class Arch implements Architecture {
             return;
         }
 
-        byte op = fetch();
+        byte opcode = fetch();
         
         // Check for prefixes
-        switch (op) {
+        switch (opcode) {
             default:
-                Instruction inst = new Instruction(op);
-                switch (inst.x) {
+                Instruction op = new Instruction(opcode);
+                switch (op.x) {
                     case 0:
-                        switch (inst.z) {
+                        switch (op.z) {
                             case 6:
-                                main[inst.y] = fetch();
+                                main[op.y] = fetch();
                         }
                     case 1:
-                        if (inst.z == 6 && inst.y == 6) {
+                        if (op.z == 6 && op.y == 6) {
                             running = false;
                         }
                     case 3:
-                        switch (inst.z) {
+                        switch (op.z) {
                             case 3:
-                                switch (inst.y) {
+                                switch (op.y) {
                                     case 2:
                                         out(fetch(), main[7]);
                                 }
