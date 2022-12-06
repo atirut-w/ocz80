@@ -111,6 +111,17 @@ public class Arch implements Architecture {
                 switch (op.x) {
                     case 0:
                         switch (op.z) {
+                            case 1:
+                                if (op.q == 0) {
+                                    byte lsb = fetch();
+                                    setRp(op.p, (short)((fetch() << 8) | lsb), false);
+                                }
+                            case 2:
+                                if (op.q == 0) {
+
+                                } else {
+
+                                }
                             case 6:
                                 main[op.y] = fetch();
                         }
@@ -134,6 +145,16 @@ public class Arch implements Architecture {
         return read(pc++);
     }
 
+    void setRp(int pair, short value, boolean af) {
+        main[pair * 2] = (byte)(value >> 8);
+        main[(pair * 2) + 1] = (byte)(value & 0xff);
+    }
+
+    short readRp(int pair, boolean af) {
+        byte msb = (byte)((main[pair * 2]) << 8);
+        return (short)(msb | fetch());
+    }
+
     byte read(short address) {
         if (address >> 12 == 0) {
             if (eeprom.length > 0) {
@@ -149,7 +170,7 @@ public class Arch implements Architecture {
     }
 
     void out(byte address, byte value) {
-        OCZ80.logger.info("IO out");
+        OCZ80.logger.info(String.format("IO out at %02x: %02x", (int)address, (int)value));
     }
 
     byte in(short address) {
