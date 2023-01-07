@@ -84,6 +84,7 @@ public class Arch implements Architecture {
         mmap = null;
         main = null;
         shadow = null;
+        pc = 0;
     }
 
     public ExecutionResult runThreaded(boolean isSynchronizedReturn) {
