@@ -10,11 +10,13 @@ public class Run extends State {
     private static int PAGESIZE = 4 * KIBIBYTE;
 
     private byte[] eeprom;
+    private byte[][] ram;
 
     public Run(Arch arch, Machine machine, byte[] eeprom) {
         super(arch, machine);
         this.eeprom = new byte[PAGESIZE];
         System.arraycopy(eeprom, 0, this.eeprom, 0, Math.min(this.eeprom.length, eeprom.length));
+        ram = new byte[arch.memorySize / PAGESIZE][PAGESIZE];
     }
 
     public boolean isInitialized() {
