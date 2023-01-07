@@ -78,6 +78,12 @@ public class Arch implements Architecture {
 
     public void close() {
         initialized = false;
+
+        eeprom = null;
+        ram = null;
+        mmap = null;
+        main = null;
+        shadow = null;
     }
 
     public ExecutionResult runThreaded(boolean isSynchronizedReturn) {
