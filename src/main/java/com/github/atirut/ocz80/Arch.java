@@ -13,7 +13,8 @@ import net.minecraft.nbt.NBTTagCompound;
 public class Arch implements Architecture {
     private final Machine machine;
     private State state;
-    private int memorySize;
+
+    public int memorySize;
 
     public Arch(Machine machine) {
         this.machine = machine;
