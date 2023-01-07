@@ -51,10 +51,15 @@ public class Arch implements Architecture {
             ram = copy;
         }
 
+        eeprom = new byte[4096];
+
         try {
             String eepromUUID = machine.components().entrySet().stream().filter(i -> i.getValue().equals("eeprom")).map(i -> i.getKey()).findAny().orElse(null);
             Object[] result = machine.invoke(eepromUUID, "get", new Object[0]);
-            eeprom = (byte[]) result[0];
+
+            for (int i = 0; i < Math.min(4096, ((byte[])result[0]).length); i++) {
+                eeprom[i] = ((byte[])result[0])[i];
+            }
         } catch (Exception e) {
             OCZ80.logger.error("Could not read EEPROM: " + e.toString());
             eeprom = new byte[0];
@@ -164,10 +169,7 @@ public class Arch implements Architecture {
 
     byte read(short address) {
         if (address >> 12 == 0) {
-            if (eeprom.length > 0) {
-                return eeprom[(address & 0x0fff) % eeprom.length];
-            }
-            return 0;
+            return eeprom[(address & 0x0fff)];
         } else {
             if (mmap[(address >> 12 - 1)] * 4096 > memorySize - 1) {
                 return 0;
