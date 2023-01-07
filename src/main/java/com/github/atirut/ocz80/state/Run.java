@@ -8,9 +8,11 @@ import li.cil.oc.api.machine.Machine;
 
 public class Run extends State {
     private static ExecutionResult SYNCHRONOUS_CALL = new ExecutionResult.SynchronizedCall();
+    private byte[] eeprom;
 
-    public Run(Arch arch, Machine machine) {
+    public Run(Arch arch, Machine machine, byte[] eeprom) {
         super(arch, machine);
+        this.eeprom = eeprom;
     }
 
     public boolean isInitialized() {
@@ -19,7 +21,7 @@ public class Run extends State {
 
     public Transition runThreaded() {
         OCZ80.logger.info("runThreaded");
-        return new Transition(this, SYNCHRONOUS_CALL);
+        return new Transition(this, SLEEP_ZERO);
     }
 
     public void close() {
