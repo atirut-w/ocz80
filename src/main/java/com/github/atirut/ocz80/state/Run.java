@@ -22,7 +22,6 @@ public class Run extends State {
     }
 
     public Transition runThreaded() {
-        OCZ80.logger.info("runThreaded");
         return new Transition(this, SLEEP_ZERO);
     }
 
