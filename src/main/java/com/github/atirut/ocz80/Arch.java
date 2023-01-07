@@ -34,7 +34,7 @@ public class Arch implements Architecture {
             }
         }
         memorySize /= 4;
-        OCZ80.logger.info("New memory size: " + memorySize / 1024 + "KB");
+        OCZ80.logger.info("Recomputed memory size: " + memorySize / 1024 + "KiB");
 
         return memorySize > 0;
     }
