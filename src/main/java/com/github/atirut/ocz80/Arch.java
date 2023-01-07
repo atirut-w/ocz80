@@ -7,9 +7,12 @@ import li.cil.oc.api.machine.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.github.atirut.ocz80.state.*;
+
 @Architecture.Name("Zilog Z80")
 public class Arch implements Architecture {
     private final Machine machine;
+    private State state;
     private int memorySize;
 
     public Arch(Machine machine) {
@@ -17,7 +20,7 @@ public class Arch implements Architecture {
     }
 
     public boolean isInitialized() {
-        return false;
+        return state != null && state.isInitialized();
     }
 
     public boolean recomputeMemory(Iterable<ItemStack> components) {
@@ -36,17 +39,26 @@ public class Arch implements Architecture {
     }
 
     public boolean initialize() {
-        return false;
+        close();
+        state = new FindEEPROM(this, machine);
+        return true;
     }
 
     public void close() {
+        if (state != null) {
+            state.close();  
+        }
+        state = null;
     }
 
     public ExecutionResult runThreaded(boolean isSynchronizedReturn) {
-        return new ExecutionResult.SynchronizedCall();
+        Transition transition = state.runThreaded();
+        state = transition.nexState;
+        return transition.executionResult;
     }
 
     public void runSynchronized() {
+        state.runSynchronized();
     }
 
     public void onSignal() {}
