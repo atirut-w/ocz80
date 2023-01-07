@@ -1,6 +1,7 @@
 package com.github.atirut.ocz80.state;
 
 import com.github.atirut.ocz80.Arch;
+
 import li.cil.oc.api.machine.ExecutionResult;
 import li.cil.oc.api.machine.Machine;
 

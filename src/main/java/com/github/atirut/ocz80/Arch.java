@@ -1,13 +1,13 @@
 package com.github.atirut.ocz80;
 
+import com.github.atirut.ocz80.state.*;
+
 import li.cil.oc.api.Driver;
 import li.cil.oc.api.driver.DriverItem;
 import li.cil.oc.api.driver.item.Memory;
 import li.cil.oc.api.machine.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
-import com.github.atirut.ocz80.state.*;
 
 @Architecture.Name("Zilog Z80")
 public class Arch implements Architecture {
