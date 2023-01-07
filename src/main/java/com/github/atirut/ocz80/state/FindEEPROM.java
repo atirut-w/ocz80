@@ -1,6 +1,7 @@
 package com.github.atirut.ocz80.state;
 
 import com.github.atirut.ocz80.Arch;
+import com.github.atirut.ocz80.OCZ80;
 
 import li.cil.oc.api.machine.ExecutionResult;
 import li.cil.oc.api.machine.Machine;
@@ -21,16 +22,17 @@ public class FindEEPROM extends State {
             return new Transition(null, new ExecutionResult.Error("No EEPROM found"));
         }
 
+        byte[] eeprom;
+
         try {
             Object[] result = machine.invoke(eepromUUID, "get", new Object[0]);
-            byte[] eeprom = (byte[])result[0];
-
-            return new Transition(new Run(arch, machine, eeprom), SLEEP_ZERO);
+            eeprom = (byte[])result[0];
         } catch (Exception e) {
-
+            OCZ80.logger.error(e.toString());
+            return new Transition(null, new ExecutionResult.Error("Could not read EEPROM"));
         }
 
-        return new Transition(null, new ExecutionResult.Error("Could not read EEPROM"));
+        return new Transition(new Run(arch, machine, eeprom), SLEEP_ZERO);
     }
 
     public void close() {
