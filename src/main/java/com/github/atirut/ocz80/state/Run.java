@@ -3,6 +3,7 @@ package com.github.atirut.ocz80.state;
 import com.github.atirut.ocz80.Arch;
 import com.github.atirut.ocz80.OCZ80;
 
+import li.cil.oc.api.machine.ExecutionResult;
 import li.cil.oc.api.machine.Machine;
 
 public class Run extends State {
@@ -20,6 +21,8 @@ public class Run extends State {
     private short sp;
     private byte flags;
     private boolean running = true;
+
+    private String crashMessage = new String();
 
     public Run(Arch arch, Machine machine, byte[] eeprom) {
         super(arch, machine);
@@ -71,8 +74,7 @@ public class Run extends State {
                             case 3:
                                 switch (op.y) {
                                     case 2:
-                                        out(fetch(), main[7]);
-                                        break;
+                                        return out(fetch(), main[7]);
                                 }
                                 break;
                         }
@@ -135,8 +137,19 @@ public class Run extends State {
         }
     }
 
-    private void out(short address, byte data) {
-        OCZ80.logger.info(String.format("I/O out at $%04x: $%02x", (int)address, (int)data));
+    private Transition out(short address, byte data) {
+        // OCZ80.logger.info(String.format("I/O out at $%04x: $%02x", (int)address, (int)data));
+
+        switch (address) {
+            case 0:
+                if (data == 0) {
+                    return new Transition(null, new ExecutionResult.Error(crashMessage));
+                }
+                crashMessage += (char)data;
+                break;
+        }
+
+        return new Transition(this, SLEEP_ZERO);
     }
 
     private class Instruction {
