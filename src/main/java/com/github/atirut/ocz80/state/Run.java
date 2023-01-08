@@ -88,7 +88,10 @@ public class Run extends State {
             return eeprom[address & 0xfff];
         }
         else {
-            return ram[mmap[address >> 12] - 1][address & 0xfff];
+            if (mmap[address >> 12] - 1 < ram.length){
+                return ram[mmap[address >> 12] - 1][address & 0xfff];
+            }
+            return 0;
         }
     }
 
