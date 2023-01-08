@@ -81,6 +81,7 @@ public class Run extends State {
                                             break;
                                         case 3:
                                             main[7] = read(fetchShort());
+                                            break;
                                     }
                                 }
 
