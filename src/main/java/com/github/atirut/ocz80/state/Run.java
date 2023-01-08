@@ -118,7 +118,7 @@ public class Run extends State {
                         switch (op.z) {
                             case 1:
                                 if (op.q == 0) {
-                                    // TODO: Pop
+                                    writeRegisterPair(pop(), op.p, true);
                                 } else {
                                     switch (op.p) {
                                         case 0:
@@ -147,7 +147,7 @@ public class Run extends State {
                                 break;
                             case 5:
                                 if (op.q == 0) {
-                                    // TODO: Push
+                                    push(readRegisterPair(op.p, true));
                                 } else {
                                     switch (op.p) {
                                         case 0:
