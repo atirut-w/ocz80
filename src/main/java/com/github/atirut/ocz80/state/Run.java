@@ -47,7 +47,9 @@ public class Run extends State {
                         switch (op.z) {
                             case 6:
                                 main[op.y] = fetch();
+                                break;
                         }
+                        break;
                     case 1:
                         if (op.z == 6 && op.y == 6) {
                             running = false;
@@ -57,15 +59,21 @@ public class Run extends State {
                             OCZ80.logger.info(String.format("DE = $%04x", (int)readRegisterPair(1, true)));
                             OCZ80.logger.info(String.format("HL = $%04x", (int)readRegisterPair(2, true)));
                         }
+                        
+                        break;
                     case 3:
                         switch (op.z) {
                             case 3:
                                 switch (op.y) {
                                     case 2:
                                         out(fetch(), main[7]);
+                                        break;
                                 }
+                                break;
                         }
+                        break;
                 }
+                break;
         }
 
         return new Transition(this, SLEEP_ZERO);
