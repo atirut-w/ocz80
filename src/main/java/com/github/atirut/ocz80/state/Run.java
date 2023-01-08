@@ -167,13 +167,13 @@ public class Run extends State {
                 if (main[7] == operand) {
                     flags |= FLAG_Z;
                 } else {
-                    flags ^= FLAG_Z;
+                    flags &= ~FLAG_Z;
                 }
 
                 if (main[7] < operand) {
                     flags |= FLAG_C;
                 } else {
-                    flags ^= FLAG_C;
+                    flags &= ~FLAG_C;
                 }
 
                 break;
