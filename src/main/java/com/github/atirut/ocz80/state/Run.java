@@ -60,7 +60,7 @@ public class Run extends State {
                                 } else {
                                     switch (op.p) {
                                         case 0:
-                                            main[7] = read(readRegisterPair(0, false));
+                                            writeRegister(7, read(readRegisterPair(0, false)));
                                             break;
                                     }
                                 }
@@ -77,7 +77,7 @@ public class Run extends State {
 
                                 break;
                             case 6:
-                                main[op.y] = fetch();
+                                writeRegister(op.y, fetch());
                                 break;
                         }
                         break;
@@ -93,7 +93,7 @@ public class Run extends State {
                         
                         break;
                     case 2:
-                        alu(op.y, main[op.z]);
+                        alu(op.y, readRegister(op.z));
                         break;
                     case 3:
                         switch (op.z) {
@@ -103,7 +103,7 @@ public class Run extends State {
                                         pc = fetchchar();
                                         break;
                                     case 2:
-                                        return out((char)fetch(), main[7]);
+                                        return out((char)fetch(), readRegister(7));
                                 }
                                 break;
                             case 6:
@@ -124,6 +124,23 @@ public class Run extends State {
 
     private void alu(int op, int operand) {
         OCZ80.logger.info("ALU operation " + op + " on " + operand);
+    }
+
+    private byte readRegister(int register) {
+        if (register == 6) {
+            return read(readRegisterPair(2, false));
+        } else {
+            return main[register];
+        }
+    }
+
+    private void writeRegister(int register, byte data) {
+        if (register == 6) {
+            // return read(readRegisterPair(2, false));
+            write(readRegisterPair(2, false), data);
+        } else {
+            main[register] = data;
+        }
     }
 
     private char readRegisterPair(int pair, boolean af) {
