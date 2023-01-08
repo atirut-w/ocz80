@@ -79,6 +79,9 @@ public class Run extends State {
                                         case 0:
                                             main[7] = read(readRegisterPair(0, false));
                                             break;
+                                        case 1:
+                                            main[7] = read(readRegisterPair(1, false));
+                                            break;
                                         case 3:
                                             main[7] = read(fetchShort());
                                             break;
