@@ -30,7 +30,7 @@ public class Run extends State {
         this.eeprom = new byte[PAGESIZE];
         System.arraycopy(eeprom, 0, this.eeprom, 0, Math.min(this.eeprom.length, eeprom.length));
         ram = new byte[arch.memorySize / PAGESIZE][PAGESIZE];
-        mmap = new byte[8];
+        mmap = new byte[16];
     }
 
     public boolean isInitialized() {
