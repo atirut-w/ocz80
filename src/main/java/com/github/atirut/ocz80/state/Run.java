@@ -138,21 +138,21 @@ public class Run extends State {
     private boolean conditional(int condition) {
         switch (condition) {
             case 0:
-                return (flags | FLAG_Z) == 0;
+                return (flags & FLAG_Z) == 0;
             case 1:
-                return (flags | FLAG_Z) > 0;
+                return (flags & FLAG_Z) > 0;
             case 2:
-                return (flags | FLAG_C) == 0;
+                return (flags & FLAG_C) == 0;
             case 3:
-                return (flags | FLAG_C) > 0;
+                return (flags & FLAG_C) > 0;
             case 4:
-                return (flags | FLAG_PV) == 0;
+                return (flags & FLAG_PV) == 0;
             case 5:
-                return (flags | FLAG_PV) > 0;
+                return (flags & FLAG_PV) > 0;
             case 6:
-                return (flags | FLAG_S) == 0;
+                return (flags & FLAG_S) == 0;
             case 7:
-                return (flags | FLAG_S) > 0;
+                return (flags & FLAG_S) > 0;
         }
         return false;
     }
