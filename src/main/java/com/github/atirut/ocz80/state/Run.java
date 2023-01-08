@@ -165,10 +165,18 @@ public class Run extends State {
         if (mmap[address >> 12] == 0) {
             return eeprom[address & 0xfff];
         } else {
-            if (mmap[address >> 12] - 1 < ram.length){
+            if (mmap[address >> 12] - 1 < ram.length) {
                 return ram[mmap[address >> 12] - 1][address & 0xfff];
             }
             return 0;
+        }
+    }
+
+    private void write(char address, byte data) {
+        if (mmap[address >> 12] == 0) {
+            return;
+        } else if (mmap[address >> 12] - 1 < ram.length) {
+            ram[mmap[address >> 12] - 1][address & 0xfff] = data;
         }
     }
 
