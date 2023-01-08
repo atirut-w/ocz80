@@ -17,8 +17,8 @@ public class Run extends State {
     private byte[] main = new byte[8];
     private byte[] alternate = new byte[8];
 
-    private short pc;
-    private short sp;
+    private char pc;
+    private char sp;
     private byte flags;
     private boolean running = true;
 
@@ -51,7 +51,7 @@ public class Run extends State {
                         switch (op.z) {
                             case 1:
                                 if (op.q == 0) {
-                                    writeRegisterPair(fetchShort(), op.p, false);
+                                    writeRegisterPair(fetchchar(), op.p, false);
                                 }
                                 break;
                             case 2:
@@ -68,11 +68,11 @@ public class Run extends State {
                                 break;
                             case 3:
                                 if (op.q == 0) {
-                                    short old = readRegisterPair(op.p, false);
-                                    writeRegisterPair((short)(old + 1), op.p, false);
+                                    char old = readRegisterPair(op.p, false);
+                                    writeRegisterPair((char)(old + 1), op.p, false);
                                 } else {
-                                    short old = readRegisterPair(op.p, false);
-                                    writeRegisterPair((short)(old - 1), op.p, false);
+                                    char old = readRegisterPair(op.p, false);
+                                    writeRegisterPair((char)(old - 1), op.p, false);
                                 }
 
                                 break;
@@ -97,10 +97,10 @@ public class Run extends State {
                             case 3:
                                 switch (op.y) {
                                     case 0:
-                                        pc = fetchShort();
+                                        pc = fetchchar();
                                         break;
                                     case 2:
-                                        return out(fetch(), main[7]);
+                                        return out((char)fetch(), main[7]);
                                 }
                                 break;
                         }
@@ -116,19 +116,19 @@ public class Run extends State {
 
     }
 
-    private short readRegisterPair(int pair, boolean af) {
+    private char readRegisterPair(int pair, boolean af) {
         if (pair < 3) {
-            return (short)((main[pair * 2] << 8) | main[(pair * 2) + 1]);
+            return (char)((main[pair * 2] << 8) | main[(pair * 2) + 1]);
         } else {
             if (!af) {
                 return sp;
             } else {
-                return (short)((main[7] << 8) | flags);
+                return (char)((main[7] << 8) | flags);
             }
         }
     }
 
-    private void writeRegisterPair(short data, int pair, boolean af) {
+    private void writeRegisterPair(char data, int pair, boolean af) {
         if (pair < 3) {
             main[pair * 2] = (byte)(data >> 8);
             main[(pair * 2) + 1] = (byte)data;
@@ -146,12 +146,12 @@ public class Run extends State {
         return read(pc++);
     }
 
-    private short fetchShort() {
+    private char fetchchar() {
         byte lsb = fetch();
-        return (short)((fetch() << 8) | lsb);
+        return (char)((fetch() << 8) | lsb);
     }
 
-    private byte read(short address) {
+    private byte read(char address) {
         if (mmap[address >> 12] == 0) {
             return eeprom[address & 0xfff];
         } else {
@@ -162,7 +162,7 @@ public class Run extends State {
         }
     }
 
-    private Transition out(short address, byte data) {
+    private Transition out(char address, byte data) {
         // OCZ80.logger.info(String.format("I/O out at $%04x: $%02x", (int)address, (int)data));
 
         switch (address) {
