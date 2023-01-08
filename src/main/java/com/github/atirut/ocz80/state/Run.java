@@ -119,6 +119,19 @@ public class Run extends State {
                                         return out((char)fetch(), readRegister(7));
                                 }
                                 break;
+                            case 5:
+                                if (op.q == 0) {
+                                    // TODO: Push
+                                } else {
+                                    switch (op.p) {
+                                        case 0:
+                                            push((char)(pc + 2));
+                                            pc = fetchShort();
+                                            break;
+                                    }
+                                }
+
+                                break;
                             case 6:
                                 alu(op.y, fetch());
                                 break;
@@ -178,6 +191,12 @@ public class Run extends State {
 
                 break;
         }
+    }
+
+    private void push(char data) {
+        write(sp, (byte)(data & 0xff));
+        write((char)(sp + 1), (byte)(data >> 8));
+        sp += 2;
     }
 
     private byte readRegister(int register) {
