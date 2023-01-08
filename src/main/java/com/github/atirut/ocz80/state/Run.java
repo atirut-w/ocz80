@@ -96,7 +96,7 @@ public class Run extends State {
                             case 3:
                                 switch (op.y) {
                                     case 0:
-                                        pc = fetch();
+                                        pc = fetchShort();
                                         break;
                                     case 2:
                                         return out(fetch(), main[7]);
