@@ -45,6 +45,11 @@ public class Run extends State {
                 switch (op.x) {
                     case 0:
                         switch (op.z) {
+                            case 1:
+                                if (op.q == 0) {
+                                    writeRegisterPair(fetchShort(), op.p, false);
+                                }
+                                break;
                             case 6:
                                 main[op.y] = fetch();
                                 break;
@@ -95,8 +100,27 @@ public class Run extends State {
         }
     }
 
+    private void writeRegisterPair(short data, int pair, boolean af) {
+        if (pair < 3) {
+            main[pair * 2] = (byte)(data >> 8);
+            main[(pair * 2) + 1] = (byte)data;
+        } else {
+            if (!af) {
+                sp = data;
+            } else {
+                main[7] = (byte)(data >> 8);
+                flags = (byte)data;
+            }
+        }
+    }
+
     private byte fetch() {
         return read(pc++);
+    }
+
+    private short fetchShort() {
+        byte lsb = fetch();
+        return (short)((fetch() << 8) | lsb);
     }
 
     private byte read(short address) {
