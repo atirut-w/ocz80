@@ -18,18 +18,16 @@ public class FindEEPROM extends State {
     public Transition runThreaded() {
         // I don't know how this works tbh
         String eepromUUID = machine.components().entrySet().stream().filter(i -> i.getValue().equals("eeprom")).map(i -> i.getKey()).findAny().orElse(null);
-        if (eepromUUID == null) {
-            return new Transition(null, new ExecutionResult.Error("No EEPROM found"));
-        }
+        byte[] eeprom = new byte[0];
 
-        byte[] eeprom;
-
-        try {
-            Object[] result = machine.invoke(eepromUUID, "get", new Object[0]);
-            eeprom = (byte[])result[0];
-        } catch (Exception e) {
-            OCZ80.logger.error(e.toString());
-            return new Transition(null, new ExecutionResult.Error("Could not read EEPROM"));
+        if (eepromUUID != null) {
+            try {
+                Object[] result = machine.invoke(eepromUUID, "get", new Object[0]);
+                eeprom = (byte[])result[0];
+            } catch (Exception e) {
+                OCZ80.logger.error(e.toString());
+                return new Transition(null, new ExecutionResult.Error("Error reading EEPROM"));
+            }
         }
 
         return new Transition(new Run(arch, machine, eeprom), SLEEP_ZERO);
