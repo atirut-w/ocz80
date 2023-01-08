@@ -105,6 +105,11 @@ public class Run extends State {
                         break;
                     case 3:
                         switch (op.z) {
+                            case 2:
+                                if (conditional(op.y)) {
+                                    pc = fetchShort();
+                                }
+                                break;
                             case 3:
                                 switch (op.y) {
                                     case 0:
@@ -128,6 +133,28 @@ public class Run extends State {
 
     public void close() {
 
+    }
+
+    private boolean conditional(int condition) {
+        switch (condition) {
+            case 0:
+                return (flags | FLAG_Z) == 0;
+            case 1:
+                return (flags | FLAG_Z) > 0;
+            case 2:
+                return (flags | FLAG_C) == 0;
+            case 3:
+                return (flags | FLAG_C) > 0;
+            case 4:
+                return (flags | FLAG_PV) == 0;
+            case 5:
+                return (flags | FLAG_PV) > 0;
+            case 6:
+                return (flags | FLAG_S) == 0;
+            case 7:
+                return (flags | FLAG_S) > 0;
+        }
+        return false;
     }
 
     private void alu(int op, byte operand) {
