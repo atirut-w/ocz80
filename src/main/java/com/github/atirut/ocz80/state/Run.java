@@ -115,6 +115,7 @@ public class Run extends State {
                                             break;
                                         case 3:
                                             sp = readRegisterPair(2, false);
+                                            break;
                                     }
                                 }
 
