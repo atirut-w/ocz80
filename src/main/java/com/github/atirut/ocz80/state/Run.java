@@ -39,6 +39,7 @@ public class Run extends State {
         System.arraycopy(eeprom, 0, this.eeprom, 0, Math.min(this.eeprom.length, eeprom.length));
         ram = new byte[arch.memorySize / PAGESIZE][PAGESIZE];
         mmap = new byte[16];
+        // mmap[1] = 1;
     }
 
     public boolean isInitialized() {
@@ -257,7 +258,6 @@ public class Run extends State {
 
     private void writeRegister(int register, byte data) {
         if (register == 6) {
-            // return read(readRegisterPair(2, false));
             write(readRegisterPair(2, false), data);
         } else {
             main[register] = data;
