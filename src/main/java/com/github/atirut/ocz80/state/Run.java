@@ -57,12 +57,12 @@ public class Run extends State {
                 switch (op.x) {
                     case 0:
                         switch (op.z) {
-                            case 1:
+                            case 1: // 16-bit load immediate/add
                                 if (op.q == 0) {
                                     writeRegisterPair(fetchShort(), op.p, false);
                                 }
                                 break;
-                            case 2:
+                            case 2: // Indirect loading
                                 if (op.q == 0) {
                                     switch (op.p) {
                                         case 2:
@@ -89,7 +89,7 @@ public class Run extends State {
                                 }
 
                                 break;
-                            case 3:
+                            case 3: // 16-bit INC/DEC
                                 if (op.q == 0) {
                                     char old = readRegisterPair(op.p, false);
                                     writeRegisterPair((char)(old + 1), op.p, false);
@@ -99,12 +99,12 @@ public class Run extends State {
                                 }
 
                                 break;
-                            case 6:
+                            case 6: // 8-bit load immediate
                                 writeRegister(op.y, fetch());
                                 break;
                         }
                         break;
-                    case 1:
+                    case 1: // 8-bit loading and halt
                         if (op.z == 6 && op.y == 6) {
                             running = false;
                             OCZ80.logger.info(String.format("CPU halted at $%04x", (int)(pc - 1)));
@@ -117,17 +117,17 @@ public class Run extends State {
                         }
                         
                         break;
-                    case 2:
+                    case 2: // Operate on accumulator and register/memory location
                         alu(op.y, readRegister(op.z));
                         break;
                     case 3:
                         switch (op.z) {
-                            case 0:
+                            case 0: // Conditional return
                                 if (conditional(op.y)) {
                                     pc = pop();
                                 }
                                 break;
-                            case 1:
+                            case 1: // POP & various ops
                                 if (op.q == 0) {
                                     writeRegisterPair(pop(), op.p, true);
                                 } else {
@@ -142,12 +142,12 @@ public class Run extends State {
                                 }
 
                                 break;
-                            case 2:
+                            case 2: // Conditional jump
                                 if (conditional(op.y)) {
                                     pc = fetchShort();
                                 }
                                 break;
-                            case 3:
+                            case 3: // Assorted operations
                                 switch (op.y) {
                                     case 0:
                                         pc = fetchShort();
@@ -165,7 +165,7 @@ public class Run extends State {
                                         writeRegisterPair(de, 2, false);
                                 }
                                 break;
-                            case 5:
+                            case 5: // PUSH & various ops
                                 if (op.q == 0) {
                                     push(readRegisterPair(op.p, true));
                                 } else {
@@ -178,7 +178,7 @@ public class Run extends State {
                                 }
 
                                 break;
-                            case 6:
+                            case 6: // Operate on accumulator and immediate operand
                                 alu(op.y, fetch());
                                 break;
                         }
