@@ -22,6 +22,7 @@ public class Run extends State {
     private byte flags;
     private boolean running = true;
 
+    private String logMessage = new String();
     private String crashMessage = new String();
 
     public Run(Arch arch, Machine machine, byte[] eeprom) {
@@ -166,6 +167,14 @@ public class Run extends State {
 
         switch (address) {
             case 0:
+                if (data == 0) {
+                    OCZ80.logger.info(logMessage);
+                    logMessage = new String();
+                } else {
+                    logMessage += (char)data;
+                }
+                break;
+            case 1:
                 if (data == 0) {
                     return new Transition(null, new ExecutionResult.Error(crashMessage));
                 }
