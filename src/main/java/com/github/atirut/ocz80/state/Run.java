@@ -10,6 +10,14 @@ public class Run extends State {
     private static int KIBIBYTE = 1024;
     private static int PAGESIZE = 4 * KIBIBYTE;
 
+    private static byte FLAG_C = 0x01;
+    private static byte FLAG_N = 0x02;
+    private static byte FLAG_PV = 0x04;
+
+    private static byte FLAG_H = 0x10;
+    private static byte FLAG_Z = 0x40;
+    private static byte FLAG_S = (byte)0x80;
+
     private byte[] eeprom;
     private byte[][] ram;
     private byte[] mmap;
@@ -122,8 +130,27 @@ public class Run extends State {
 
     }
 
-    private void alu(int op, int operand) {
+    private void alu(int op, byte operand) {
         OCZ80.logger.info("ALU operation " + op + " on " + operand);
+
+        switch (op) {
+            case 7:
+                // TODO: Signed mode
+
+                if (main[7] == operand) {
+                    flags |= FLAG_Z;
+                } else {
+                    flags ^= FLAG_Z;
+                }
+
+                if (main[7] < operand) {
+                    flags |= FLAG_C;
+                } else {
+                    flags ^= FLAG_C;
+                }
+
+                break;
+        }
     }
 
     private byte readRegister(int register) {
