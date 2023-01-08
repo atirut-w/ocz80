@@ -24,10 +24,10 @@ public class Run extends State {
 
     private byte[] main = new byte[8];
     private byte[] alternate = new byte[8];
+    private byte flags;
 
     private char pc;
     private char sp;
-    private byte flags;
     private boolean running = true;
 
     private String logMessage = new String();
