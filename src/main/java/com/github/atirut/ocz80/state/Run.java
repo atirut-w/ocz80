@@ -16,7 +16,7 @@ public class Run extends State {
 
     private static byte FLAG_H = 0x10;
     private static byte FLAG_Z = 0x40;
-    private static byte FLAG_S = (byte)0x80;
+    private static byte FLAG_S = (byte) 0x80;
 
     private byte[] eeprom;
     private byte[][] ram;
@@ -66,7 +66,7 @@ public class Run extends State {
                                 case 2:
                                     char address = fetchShort();
                                     write(address, main[5]);
-                                    write((char)(address + 1), main[4]);
+                                    write((char) (address + 1), main[4]);
                                     break;
                                 case 3:
                                     write(fetchShort(), main[7]);
@@ -90,10 +90,10 @@ public class Run extends State {
                     case 3: // 16-bit INC/DEC
                         if (op.q == 0) {
                             char old = readRegisterPair(op.p, false);
-                            writeRegisterPair((char)(old + 1), op.p, false);
+                            writeRegisterPair((char) (old + 1), op.p, false);
                         } else {
                             char old = readRegisterPair(op.p, false);
-                            writeRegisterPair((char)(old - 1), op.p, false);
+                            writeRegisterPair((char) (old - 1), op.p, false);
                         }
 
                         break;
@@ -105,15 +105,15 @@ public class Run extends State {
             case 1: // 8-bit loading and halt
                 if (op.z == 6 && op.y == 6) {
                     running = false;
-                    OCZ80.logger.info(String.format("CPU halted at $%04x", (int)(pc - 1)));
-                    OCZ80.logger.info(String.format("AF = $%04x", (int)readRegisterPair(3, true)));
-                    OCZ80.logger.info(String.format("BC = $%04x", (int)readRegisterPair(0, true)));
-                    OCZ80.logger.info(String.format("DE = $%04x", (int)readRegisterPair(1, true)));
-                    OCZ80.logger.info(String.format("HL = $%04x", (int)readRegisterPair(2, true)));
+                    OCZ80.logger.info(String.format("CPU halted at $%04x", (int) (pc - 1)));
+                    OCZ80.logger.info(String.format("AF = $%04x", (int) readRegisterPair(3, true)));
+                    OCZ80.logger.info(String.format("BC = $%04x", (int) readRegisterPair(0, true)));
+                    OCZ80.logger.info(String.format("DE = $%04x", (int) readRegisterPair(1, true)));
+                    OCZ80.logger.info(String.format("HL = $%04x", (int) readRegisterPair(2, true)));
                 } else {
                     writeRegister(op.y, readRegister(op.z));
                 }
-                
+
                 break;
             case 2: // Operate on accumulator and register/memory location
                 alu(op.y, readRegister(op.z));
@@ -151,7 +151,7 @@ public class Run extends State {
                                 pc = fetchShort();
                                 break;
                             case 2:
-                                return out((char)fetch(), readRegister(7));
+                                return out((char) fetch(), readRegister(7));
                             case 4:
                                 char onstack = pop();
                                 push(readRegisterPair(2, false));
@@ -169,7 +169,7 @@ public class Run extends State {
                         } else {
                             switch (op.p) {
                                 case 0:
-                                    push((char)(pc + 2));
+                                    push((char) (pc + 2));
                                     pc = fetchShort();
                                     break;
                             }
@@ -237,13 +237,13 @@ public class Run extends State {
 
     private void push(char data) {
         sp -= 2;
-        write(sp, (byte)(data & 0xff));
-        write((char)(sp + 1), (byte)(data >> 8));
+        write(sp, (byte) (data & 0xff));
+        write((char) (sp + 1), (byte) (data >> 8));
     }
 
     private char pop() {
         byte lsb = read(sp);
-        char data = (char)((read((char)(sp + 1)) << 8) | lsb);
+        char data = (char) ((read((char) (sp + 1)) << 8) | lsb);
         sp += 2;
         return data;
     }
@@ -266,26 +266,26 @@ public class Run extends State {
 
     private char readRegisterPair(int pair, boolean af) {
         if (pair < 3) {
-            return (char)((main[pair * 2] << 8) | main[(pair * 2) + 1]);
+            return (char) ((main[pair * 2] << 8) | main[(pair * 2) + 1]);
         } else {
             if (!af) {
                 return sp;
             } else {
-                return (char)((main[7] << 8) | flags);
+                return (char) ((main[7] << 8) | flags);
             }
         }
     }
 
     private void writeRegisterPair(char data, int pair, boolean af) {
         if (pair < 3) {
-            main[pair * 2] = (byte)(data >> 8);
-            main[(pair * 2) + 1] = (byte)data;
+            main[pair * 2] = (byte) (data >> 8);
+            main[(pair * 2) + 1] = (byte) data;
         } else {
             if (!af) {
                 sp = data;
             } else {
-                main[7] = (byte)(data >> 8);
-                flags = (byte)data;
+                main[7] = (byte) (data >> 8);
+                flags = (byte) data;
             }
         }
     }
@@ -296,7 +296,7 @@ public class Run extends State {
 
     private char fetchShort() {
         byte lsb = fetch();
-        return (char)((fetch() << 8) | lsb);
+        return (char) ((fetch() << 8) | lsb);
     }
 
     private byte read(char address) {
@@ -319,7 +319,8 @@ public class Run extends State {
     }
 
     private Transition out(char address, byte data) {
-        // OCZ80.logger.info(String.format("I/O out at $%04x: $%02x", (int)address, (int)data));
+        // OCZ80.logger.info(String.format("I/O out at $%04x: $%02x", (int)address,
+        // (int)data));
 
         switch (address) {
             case 0:
@@ -327,16 +328,16 @@ public class Run extends State {
                     OCZ80.logger.info(logMessage);
                     logMessage = new String();
                 } else {
-                    logMessage += (char)data;
+                    logMessage += (char) data;
                 }
                 break;
             case 1:
-                return new Transition(null, new ExecutionResult.Error(String.format("$%02x", (int)data & 0xff)));
+                return new Transition(null, new ExecutionResult.Error(String.format("$%02x", (int) data & 0xff)));
             case 2:
                 if (data == 0) {
                     return new Transition(null, new ExecutionResult.Error(crashMessage));
                 }
-                crashMessage += (char)data;
+                crashMessage += (char) data;
                 break;
             default:
                 if ((address >> 4) == 0x1) {
@@ -353,12 +354,12 @@ public class Run extends State {
         final byte x, y, z, p, q;
 
         public Instruction(byte opcode) {
-            x = (byte)((opcode >> 6) & 0x03);
-            y = (byte)((opcode >> 3) & 0x07);
-            z = (byte)(opcode & 0x07);
+            x = (byte) ((opcode >> 6) & 0x03);
+            y = (byte) ((opcode >> 3) & 0x07);
+            z = (byte) (opcode & 0x07);
 
-            p = (byte)(y >> 1);
-            q = (byte)(y % 2);
+            p = (byte) (y >> 1);
+            q = (byte) (y % 2);
         }
     }
 }
