@@ -323,6 +323,12 @@ public class Run extends State {
                 }
                 crashMessage += (char)data;
                 break;
+            default:
+                if ((address >> 4) == 0x1) {
+                    mmap[address & 0xf] = data;
+                }
+
+                break;
         }
 
         return new Transition(this, SLEEP_ZERO);
