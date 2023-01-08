@@ -143,6 +143,11 @@ public class Run extends State {
                                         break;
                                     case 2:
                                         return out((char)fetch(), readRegister(7));
+                                    case 4:
+                                        char onstack = pop();
+                                        push(readRegisterPair(2, false));
+                                        writeRegisterPair(onstack, 2, false);
+                                        break;
                                 }
                                 break;
                             case 5:
