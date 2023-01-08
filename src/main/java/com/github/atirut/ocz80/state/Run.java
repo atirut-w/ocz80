@@ -105,6 +105,18 @@ public class Run extends State {
                         break;
                     case 3:
                         switch (op.z) {
+                            case 1:
+                                if (op.q == 0) {
+                                    // TODO: Pop
+                                } else {
+                                    switch (op.p) {
+                                        case 0:
+                                            pc = pop();
+                                            break;
+                                    }
+                                }
+
+                                break;
                             case 2:
                                 if (conditional(op.y)) {
                                     pc = fetchShort();
@@ -197,6 +209,13 @@ public class Run extends State {
         sp -= 2;
         write(sp, (byte)(data & 0xff));
         write((char)(sp + 1), (byte)(data >> 8));
+    }
+
+    private char pop() {
+        byte lsb = read(sp);
+        char data = (char)((read((char)(sp + 1)) << 8) | lsb);
+        sp += 2;
+        return data;
     }
 
     private byte readRegister(int register) {
