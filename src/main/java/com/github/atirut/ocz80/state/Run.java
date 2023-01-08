@@ -77,7 +77,7 @@ public class Run extends State {
                                 } else {
                                     switch (op.p) {
                                         case 0:
-                                            writeRegister(7, read(readRegisterPair(0, false)));
+                                            main[7] = read(readRegisterPair(0, false));
                                             break;
                                         case 3:
                                             main[7] = read(fetchShort());
