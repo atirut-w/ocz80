@@ -113,6 +113,8 @@ public class Run extends State {
                                         case 0:
                                             pc = pop();
                                             break;
+                                        case 3:
+                                            sp = readRegisterPair(2, false);
                                     }
                                 }
 
