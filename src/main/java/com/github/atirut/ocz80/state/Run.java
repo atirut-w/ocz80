@@ -143,8 +143,7 @@ public class Run extends State {
     private byte read(short address) {
         if (mmap[address >> 12] == 0) {
             return eeprom[address & 0xfff];
-        }
-        else {
+        } else {
             if (mmap[address >> 12] - 1 < ram.length){
                 return ram[mmap[address >> 12] - 1][address & 0xfff];
             }
