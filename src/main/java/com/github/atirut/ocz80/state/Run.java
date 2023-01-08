@@ -64,12 +64,23 @@ public class Run extends State {
                                 break;
                             case 2:
                                 if (op.q == 0) {
-                                    // TODO
+                                    switch (op.p) {
+                                        case 2:
+                                            char address = fetchShort();
+                                            write(address, main[5]);
+                                            write((char)(address + 1), main[4]);
+                                            break;
+                                        case 3:
+                                            write(fetchShort(), main[7]);
+                                            break;
+                                    }
                                 } else {
                                     switch (op.p) {
                                         case 0:
                                             writeRegister(7, read(readRegisterPair(0, false)));
                                             break;
+                                        case 3:
+                                            main[7] = read(fetchShort());
                                     }
                                 }
 
@@ -305,7 +316,7 @@ public class Run extends State {
                 }
                 break;
             case 1:
-                return new Transition(null, new ExecutionResult.Error(String.format("$%02x", (int)data)));
+                return new Transition(null, new ExecutionResult.Error(String.format("$%02x", (int)data & 0xff)));
             case 2:
                 if (data == 0) {
                     return new Transition(null, new ExecutionResult.Error(crashMessage));
