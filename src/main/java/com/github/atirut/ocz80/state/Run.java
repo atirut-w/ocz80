@@ -47,7 +47,8 @@ public class Run extends State {
     }
 
     public Transition runThreaded() {
-        for (int i = 0; i < 16; i++) {
+        // Instructions per second / (1 / (runThreaded delay))
+        for (int i = 0; i < 12000; i++) {
             if (!running) {
                 return new Transition(this, SLEEP_ZERO);
             }
