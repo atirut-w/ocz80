@@ -112,6 +112,8 @@ public class Run extends State {
                             OCZ80.logger.info(String.format("BC = $%04x", (int)readRegisterPair(0, true)));
                             OCZ80.logger.info(String.format("DE = $%04x", (int)readRegisterPair(1, true)));
                             OCZ80.logger.info(String.format("HL = $%04x", (int)readRegisterPair(2, true)));
+                        } else {
+                            writeRegister(op.y, readRegister(op.z));
                         }
                         
                         break;
