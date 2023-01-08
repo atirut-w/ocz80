@@ -59,7 +59,7 @@ public class Run extends State {
                         switch (op.z) {
                             case 1:
                                 if (op.q == 0) {
-                                    writeRegisterPair(fetchchar(), op.p, false);
+                                    writeRegisterPair(fetchShort(), op.p, false);
                                 }
                                 break;
                             case 2:
@@ -108,7 +108,7 @@ public class Run extends State {
                             case 3:
                                 switch (op.y) {
                                     case 0:
-                                        pc = fetchchar();
+                                        pc = fetchShort();
                                         break;
                                     case 2:
                                         return out((char)fetch(), readRegister(7));
@@ -200,7 +200,7 @@ public class Run extends State {
         return read(pc++);
     }
 
-    private char fetchchar() {
+    private char fetchShort() {
         byte lsb = fetch();
         return (char)((fetch() << 8) | lsb);
     }
