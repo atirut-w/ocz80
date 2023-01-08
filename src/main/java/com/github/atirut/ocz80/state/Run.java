@@ -148,6 +148,10 @@ public class Run extends State {
                                         push(readRegisterPair(2, false));
                                         writeRegisterPair(onstack, 2, false);
                                         break;
+                                    case 5:
+                                        char de = readRegisterPair(1, false);
+                                        writeRegisterPair(readRegisterPair(2, false), 1, false);
+                                        writeRegisterPair(de, 2, false);
                                 }
                                 break;
                             case 5:
