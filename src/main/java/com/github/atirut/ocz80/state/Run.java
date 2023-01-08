@@ -50,138 +50,133 @@ public class Run extends State {
             return new Transition(this, SLEEP_ZERO);
         }
 
-        byte opcode = fetch();
-        switch (opcode) {
-            default: // Unprefixed opcodes
-                Instruction op = new Instruction(opcode);
-                switch (op.x) {
-                    case 0:
-                        switch (op.z) {
-                            case 1: // 16-bit load immediate/add
-                                if (op.q == 0) {
-                                    writeRegisterPair(fetchShort(), op.p, false);
-                                }
-                                break;
-                            case 2: // Indirect loading
-                                if (op.q == 0) {
-                                    switch (op.p) {
-                                        case 2:
-                                            char address = fetchShort();
-                                            write(address, main[5]);
-                                            write((char)(address + 1), main[4]);
-                                            break;
-                                        case 3:
-                                            write(fetchShort(), main[7]);
-                                            break;
-                                    }
-                                } else {
-                                    switch (op.p) {
-                                        case 0:
-                                            main[7] = read(readRegisterPair(0, false));
-                                            break;
-                                        case 1:
-                                            main[7] = read(readRegisterPair(1, false));
-                                            break;
-                                        case 3:
-                                            main[7] = read(fetchShort());
-                                            break;
-                                    }
-                                }
-
-                                break;
-                            case 3: // 16-bit INC/DEC
-                                if (op.q == 0) {
-                                    char old = readRegisterPair(op.p, false);
-                                    writeRegisterPair((char)(old + 1), op.p, false);
-                                } else {
-                                    char old = readRegisterPair(op.p, false);
-                                    writeRegisterPair((char)(old - 1), op.p, false);
-                                }
-
-                                break;
-                            case 6: // 8-bit load immediate
-                                writeRegister(op.y, fetch());
-                                break;
+        Instruction op = new Instruction(fetch());
+        switch (op.x) {
+            case 0:
+                switch (op.z) {
+                    case 1: // 16-bit load immediate/add
+                        if (op.q == 0) {
+                            writeRegisterPair(fetchShort(), op.p, false);
                         }
                         break;
-                    case 1: // 8-bit loading and halt
-                        if (op.z == 6 && op.y == 6) {
-                            running = false;
-                            OCZ80.logger.info(String.format("CPU halted at $%04x", (int)(pc - 1)));
-                            OCZ80.logger.info(String.format("AF = $%04x", (int)readRegisterPair(3, true)));
-                            OCZ80.logger.info(String.format("BC = $%04x", (int)readRegisterPair(0, true)));
-                            OCZ80.logger.info(String.format("DE = $%04x", (int)readRegisterPair(1, true)));
-                            OCZ80.logger.info(String.format("HL = $%04x", (int)readRegisterPair(2, true)));
+                    case 2: // Indirect loading
+                        if (op.q == 0) {
+                            switch (op.p) {
+                                case 2:
+                                    char address = fetchShort();
+                                    write(address, main[5]);
+                                    write((char)(address + 1), main[4]);
+                                    break;
+                                case 3:
+                                    write(fetchShort(), main[7]);
+                                    break;
+                            }
                         } else {
-                            writeRegister(op.y, readRegister(op.z));
+                            switch (op.p) {
+                                case 0:
+                                    main[7] = read(readRegisterPair(0, false));
+                                    break;
+                                case 1:
+                                    main[7] = read(readRegisterPair(1, false));
+                                    break;
+                                case 3:
+                                    main[7] = read(fetchShort());
+                                    break;
+                            }
                         }
-                        
+
                         break;
-                    case 2: // Operate on accumulator and register/memory location
-                        alu(op.y, readRegister(op.z));
+                    case 3: // 16-bit INC/DEC
+                        if (op.q == 0) {
+                            char old = readRegisterPair(op.p, false);
+                            writeRegisterPair((char)(old + 1), op.p, false);
+                        } else {
+                            char old = readRegisterPair(op.p, false);
+                            writeRegisterPair((char)(old - 1), op.p, false);
+                        }
+
                         break;
-                    case 3:
-                        switch (op.z) {
-                            case 0: // Conditional return
-                                if (conditional(op.y)) {
+                    case 6: // 8-bit load immediate
+                        writeRegister(op.y, fetch());
+                        break;
+                }
+                break;
+            case 1: // 8-bit loading and halt
+                if (op.z == 6 && op.y == 6) {
+                    running = false;
+                    OCZ80.logger.info(String.format("CPU halted at $%04x", (int)(pc - 1)));
+                    OCZ80.logger.info(String.format("AF = $%04x", (int)readRegisterPair(3, true)));
+                    OCZ80.logger.info(String.format("BC = $%04x", (int)readRegisterPair(0, true)));
+                    OCZ80.logger.info(String.format("DE = $%04x", (int)readRegisterPair(1, true)));
+                    OCZ80.logger.info(String.format("HL = $%04x", (int)readRegisterPair(2, true)));
+                } else {
+                    writeRegister(op.y, readRegister(op.z));
+                }
+                
+                break;
+            case 2: // Operate on accumulator and register/memory location
+                alu(op.y, readRegister(op.z));
+                break;
+            case 3:
+                switch (op.z) {
+                    case 0: // Conditional return
+                        if (conditional(op.y)) {
+                            pc = pop();
+                        }
+                        break;
+                    case 1: // POP & various ops
+                        if (op.q == 0) {
+                            writeRegisterPair(pop(), op.p, true);
+                        } else {
+                            switch (op.p) {
+                                case 0:
                                     pc = pop();
-                                }
-                                break;
-                            case 1: // POP & various ops
-                                if (op.q == 0) {
-                                    writeRegisterPair(pop(), op.p, true);
-                                } else {
-                                    switch (op.p) {
-                                        case 0:
-                                            pc = pop();
-                                            break;
-                                        case 3:
-                                            sp = readRegisterPair(2, false);
-                                            break;
-                                    }
-                                }
-
-                                break;
-                            case 2: // Conditional jump
-                                if (conditional(op.y)) {
-                                    pc = fetchShort();
-                                }
-                                break;
-                            case 3: // Assorted operations
-                                switch (op.y) {
-                                    case 0:
-                                        pc = fetchShort();
-                                        break;
-                                    case 2:
-                                        return out((char)fetch(), readRegister(7));
-                                    case 4:
-                                        char onstack = pop();
-                                        push(readRegisterPair(2, false));
-                                        writeRegisterPair(onstack, 2, false);
-                                        break;
-                                    case 5:
-                                        char de = readRegisterPair(1, false);
-                                        writeRegisterPair(readRegisterPair(2, false), 1, false);
-                                        writeRegisterPair(de, 2, false);
-                                }
-                                break;
-                            case 5: // PUSH & various ops
-                                if (op.q == 0) {
-                                    push(readRegisterPair(op.p, true));
-                                } else {
-                                    switch (op.p) {
-                                        case 0:
-                                            push((char)(pc + 2));
-                                            pc = fetchShort();
-                                            break;
-                                    }
-                                }
-
-                                break;
-                            case 6: // Operate on accumulator and immediate operand
-                                alu(op.y, fetch());
-                                break;
+                                    break;
+                                case 3:
+                                    sp = readRegisterPair(2, false);
+                                    break;
+                            }
                         }
+
+                        break;
+                    case 2: // Conditional jump
+                        if (conditional(op.y)) {
+                            pc = fetchShort();
+                        }
+                        break;
+                    case 3: // Assorted operations
+                        switch (op.y) {
+                            case 0:
+                                pc = fetchShort();
+                                break;
+                            case 2:
+                                return out((char)fetch(), readRegister(7));
+                            case 4:
+                                char onstack = pop();
+                                push(readRegisterPair(2, false));
+                                writeRegisterPair(onstack, 2, false);
+                                break;
+                            case 5:
+                                char de = readRegisterPair(1, false);
+                                writeRegisterPair(readRegisterPair(2, false), 1, false);
+                                writeRegisterPair(de, 2, false);
+                        }
+                        break;
+                    case 5: // PUSH & various ops
+                        if (op.q == 0) {
+                            push(readRegisterPair(op.p, true));
+                        } else {
+                            switch (op.p) {
+                                case 0:
+                                    push((char)(pc + 2));
+                                    pc = fetchShort();
+                                    break;
+                            }
+                        }
+
+                        break;
+                    case 6: // Operate on accumulator and immediate operand
+                        alu(op.y, fetch());
                         break;
                 }
                 break;
