@@ -92,6 +92,9 @@ public class Run extends State {
                         }
                         
                         break;
+                    case 2:
+                        alu(op.y, main[op.z]);
+                        break;
                     case 3:
                         switch (op.z) {
                             case 3:
@@ -102,6 +105,9 @@ public class Run extends State {
                                     case 2:
                                         return out((char)fetch(), main[7]);
                                 }
+                                break;
+                            case 6:
+                                alu(op.y, fetch());
                                 break;
                         }
                         break;
@@ -114,6 +120,10 @@ public class Run extends State {
 
     public void close() {
 
+    }
+
+    private void alu(int op, int operand) {
+        OCZ80.logger.info("ALU operation " + op + " on " + operand);
     }
 
     private char readRegisterPair(int pair, boolean af) {
