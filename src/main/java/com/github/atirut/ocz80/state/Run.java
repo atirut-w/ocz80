@@ -57,6 +57,14 @@ public class Run extends State {
                             OCZ80.logger.info(String.format("DE = $%04x", (int)readRegisterPair(1, true)));
                             OCZ80.logger.info(String.format("HL = $%04x", (int)readRegisterPair(2, true)));
                         }
+                    case 3:
+                        switch (op.z) {
+                            case 3:
+                                switch (op.y) {
+                                    case 2:
+                                        out(fetch(), main[7]);
+                                }
+                        }
                 }
         }
 
@@ -93,6 +101,10 @@ public class Run extends State {
             }
             return 0;
         }
+    }
+
+    private void out(short address, byte data) {
+        OCZ80.logger.info(String.format("I/O out at $%04x: $%02x", (int)address, (int)data));
     }
 
     private class Instruction {
