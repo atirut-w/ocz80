@@ -120,6 +120,11 @@ public class Run extends State {
                         break;
                     case 3:
                         switch (op.z) {
+                            case 0:
+                                if (conditional(op.y)) {
+                                    pc = pop();
+                                }
+                                break;
                             case 1:
                                 if (op.q == 0) {
                                     writeRegisterPair(pop(), op.p, true);
