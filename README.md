@@ -1,2 +1,2 @@
 # OCZ80
-WIP
+Z80-powered architecture addon for OpenComputers
