@@ -194,9 +194,9 @@ public class Run extends State {
     }
 
     private void push(char data) {
+        sp -= 2;
         write(sp, (byte)(data & 0xff));
         write((char)(sp + 1), (byte)(data >> 8));
-        sp += 2;
     }
 
     private byte readRegister(int register) {
