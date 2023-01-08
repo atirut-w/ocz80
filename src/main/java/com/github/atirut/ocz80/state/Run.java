@@ -65,6 +65,16 @@ public class Run extends State {
                                 }
 
                                 break;
+                            case 3:
+                                if (op.q == 0) {
+                                    short old = readRegisterPair(op.p, false);
+                                    writeRegisterPair((short)(old + 1), op.p, false);
+                                } else {
+                                    short old = readRegisterPair(op.p, false);
+                                    writeRegisterPair((short)(old - 1), op.p, false);
+                                }
+
+                                break;
                             case 6:
                                 main[op.y] = fetch();
                                 break;
