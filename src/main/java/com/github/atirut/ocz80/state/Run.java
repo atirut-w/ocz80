@@ -304,6 +304,8 @@ public class Run extends State {
                 }
                 break;
             case 1:
+                return new Transition(null, new ExecutionResult.Error(String.format("$02x", (int)data)));
+            case 2:
                 if (data == 0) {
                     return new Transition(null, new ExecutionResult.Error(crashMessage));
                 }
