@@ -158,7 +158,7 @@ public class Run extends State {
     }
 
     private void alu(int op, byte operand) {
-        OCZ80.logger.info("ALU operation " + op + " on " + operand);
+        // OCZ80.logger.info("ALU operation " + op + " on " + operand);
 
         switch (op) {
             case 7:
