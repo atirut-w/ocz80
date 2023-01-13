@@ -224,6 +224,9 @@ public class Run extends State {
         // OCZ80.logger.info("ALU operation " + op + " on " + operand);
 
         switch (op) {
+            default:
+                OCZ80.logger.warn(String.format("Unknown ALU operation $%02x", op));
+                break;
             case 7:
                 // TODO: Signed mode
 
