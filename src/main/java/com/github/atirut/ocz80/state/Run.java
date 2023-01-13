@@ -55,6 +55,11 @@ public class Run extends State {
 
             Instruction op = new Instruction(fetch());
             switch (op.x) {
+                default:
+                    pc--;
+                    OCZ80.logger.warn(String.format("Unknown opcode $%02x at $%04x", read(pc), pc));
+                    pc++;
+                    break;
                 case 0:
                     switch (op.z) {
                         case 1: // 16-bit load immediate/add
