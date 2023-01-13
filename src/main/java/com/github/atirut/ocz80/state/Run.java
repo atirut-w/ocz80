@@ -227,7 +227,39 @@ public class Run extends State {
             default:
                 OCZ80.logger.warn(String.format("Unknown ALU operation $%02x", op));
                 break;
-            case 7:
+            case 0: // ADD
+                // TODO: Flags
+
+                main[7] += operand;
+                break;
+            case 1: // ADC
+                // TODO: Flags
+
+                main[7] += operand;
+                break;
+            case 2: // SUB
+                // TODO: Flags
+
+                main[7] -= operand;
+                break;
+            case 3: // SBC
+                // TODO: Flags
+
+                main[7] -= operand;
+                break;
+            case 4: // AND
+                // TODO: Flags
+
+                main[7] &= operand;
+            case 5: // XOR
+                // TODO: Flags
+
+                main[7] ^= operand;
+            case 6: // OR
+                // TODO: Flags
+
+                main[7] |= operand;
+            case 7: // CP
                 // TODO: Signed mode
 
                 if (main[7] == operand) {
